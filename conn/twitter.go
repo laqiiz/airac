@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	tempCredKey  string
-	tokenCredKey string
+	consumerKey string
+	secretKey   string
 )
 
 type Account struct {
@@ -23,8 +23,8 @@ type Account struct {
 }
 
 func init() {
-	tempCredKey = os.Getenv("TWITTER_CONSUMER_KEY")
-	tokenCredKey = os.Getenv("TWITTER_CONSUMER_SECRET")
+	consumerKey = os.Getenv("TWITTER_CONSUMER_KEY")
+	secretKey = os.Getenv("TWITTER_CONSUMER_SECRET")
 }
 
 func GetTwitterConnect() *oauth.Client {
@@ -33,8 +33,8 @@ func GetTwitterConnect() *oauth.Client {
 		ResourceOwnerAuthorizationURI: "https://api.twitter.com/oauth/authorize",
 		TokenRequestURI:               "https://api.twitter.com/oauth/access_token",
 		Credentials: oauth.Credentials{
-			Token:  tempCredKey,
-			Secret: tokenCredKey,
+			Token:  consumerKey,
+			Secret: secretKey,
 		},
 	}
 }

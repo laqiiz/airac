@@ -8,7 +8,7 @@
     <br/>
     <div class="alert alert-success" role="alert">Facebook Account Login Success！</div>
     <div class="panel panel-success">
-        <div class="panel-heading">情報</div>
+        <div class="panel-heading">Information</div>
         <div class="panel-body">
             <br/>
             <ul class="list-group">
@@ -18,5 +18,5 @@
             </ul>
         </div>
     </div>
-    <a href="/">戻る</a>
+    <a href="/">Home</a>
 </div>

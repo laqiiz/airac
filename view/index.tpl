@@ -7,42 +7,41 @@
 
 <div class="container">
     {{.Message}}
+    <div class="well">OAuth Sample Top</div>
     <br/>
-    <br/>
-    <div class="well">oauth認証サンプル</div>
     <div class="panel panel-default">
         <div class="panel-heading">
             <i class="fa fa-google" aria-hidden="true" style="font-size:2.5rem;"></i>&nbsp;&nbsp;Googleログイン
         </div>
         <div class="panel-body">
-            <a href="/google/oauth2">oauth2認証</a>
+            <a href="/google/oauth2">OAuth2認証</a>
         </div>
     </div>
     <br/>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <i class="fa fa-twitter" aria-hidden="true" style="font-size:2.5rem;"></i>&nbsp;&nbsp;twitterログイン
+            <i class="fa fa-twitter" aria-hidden="true" style="font-size:2.5rem;"></i>&nbsp;&nbsp;Twitterログイン
         </div>
         <div class="panel-body">
-            <a href="/twitter/oauth">oauth認証</a>
+            <a href="/twitter/oauth">OAuth認証</a>
         </div>
     </div>
     <br/>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <i class="fa fa-facebook" aria-hidden="true" style="font-size:2.5rem;"></i>&nbsp;&nbsp;facebookログイン
+            <i class="fa fa-facebook" aria-hidden="true" style="font-size:2.5rem;"></i>&nbsp;&nbsp;Facebookログイン
         </div>
         <div class="panel-body">
-            <a href="/facebook/oauth2">oauth2認証</a>
+            <a href="/facebook/oauth2">OAuth2認証</a>
         </div>
     </div>
     <br/>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <i class="fa fa-github" aria-hidden="true" style="font-size:2.5rem;"></i>&nbsp;&nbsp;githubログイン
+            <i class="fa fa-github" aria-hidden="true" style="font-size:2.5rem;"></i>&nbsp;&nbsp;GitHubログイン
         </div>
         <div class="panel-body">
-            <a href="/github/oauth2">oauth2認証</a>
+            <a href="/github/oauth2">OAuth2認証</a>
         </div>
     </div>
     <br/>
