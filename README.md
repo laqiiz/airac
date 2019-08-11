@@ -9,6 +9,21 @@ Auth Identify Resource and Access Controller
 
 ### Windows
 
+Get clientID and Secret Key each applications.
+
+* [Google]()
+* [Twitter]()
+  * Permissions > Access permission > check "Read-only"
+  * Permissions > Additional permissions > check on "Request email address from users"
+* [Facebook]()
+* [GitHub](https://github.com/settings/apps/new)
+  * User authorization callback URL > "http://localhost:8000/github/callback"
+  * User permissions > check on "User permissions" Access Read-only 
+  * Where can this GitHub App be installed? > Any account
+
+
+Set environment variables.
+
 ```sh
 # Google Client ID
 set GOOGLE_CLIENT_ID=<Your Client ID>
@@ -17,6 +32,13 @@ set GOOGLE_CLIENT_SECRET=<Your Client Secret>
 # Twitter Consumer API keys
 set TWITTER_CONSUMER_KEY=<Your Consumer Key>
 set TWITTER_CONSUMER_SECRET=<Your Consumer Secret>
+
+# Facebook
+set FACEBOOK_CLIENT_ID=<Your Client ID>
+set FACEBOOK_CLIENT_SECRET=<Your Client Secret>
+
+# GitHub
+
 
 # Optional(default 8000) 
 set PORT=8000

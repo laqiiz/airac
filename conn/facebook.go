@@ -12,8 +12,8 @@ const (
 
 func GetFacebookConnect() *oauth2.Config {
 
-	clientID := os.Getenv("FB_CLIENT_ID")
-	clientSecret := os.Getenv("FB_CLIENT_SECRET")
+	clientID := os.Getenv("FACEBOOK_CLIENT_ID")
+	clientSecret := os.Getenv("FACEBOOK_CLIENT_SECRET")
 
 	return &oauth2.Config{
 		ClientID:     clientID,

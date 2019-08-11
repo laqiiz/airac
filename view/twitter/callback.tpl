@@ -8,7 +8,7 @@
     <br/>
     <div class="alert alert-success" role="alert">Twitter Account Login Success！</div>
     <div class="panel panel-success">
-        <div class="panel-heading">情報</div>
+        <div class="panel-heading">Information</div>
         <div class="panel-body">
             <br/>
             <ul class="list-group">
@@ -16,9 +16,8 @@
                 <li class="list-group-item">ID：{{.ID}}
                 <li class="list-group-item">Name：{{.ScreenName}}
                 <li class="list-group-item">Email：{{.Email}}
-                <li class="list-group-item"><a href="/twitter/post">テストで呟く</a>（※連携中のアカウントでAPI投稿を行います）
             </ul>
         </div>
     </div>
-    <a href="/">戻る</a>
+    <a href="/">Home</a>
 </div>

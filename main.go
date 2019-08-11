@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/alexedwards/scs/v2"
 	"github.com/laqiiz/airac/handler"
 	"github.com/laqiiz/airac/middleware"
@@ -49,7 +48,6 @@ func main() {
 	twitterHandler := handler.NewTwitterHandler(sessionManager)
 	mux.HandleFunc("/twitter/oauth", twitterHandler.Redirect)
 	mux.HandleFunc("/twitter/callback", twitterHandler.GetCallback)
-	mux.HandleFunc("/twitter/post", twitterHandler.Tweet)
 
 	// Facebook
 	fb := handler.FacebookHandler{}
@@ -57,12 +55,9 @@ func main() {
 	mux.HandleFunc("/facebook/callback", middleware.Entry(fb.GetCallback))
 
 	// GitHub
-	mux.HandleFunc("/github/oauth2", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "Hello World")
-	})
-	mux.HandleFunc("/github/callback", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "Hello World")
-	})
+	github := handler.GitHubHandler{}
+	mux.HandleFunc("/github/oauth2", github.Redirect)
+	mux.HandleFunc("/github/callback", github.GetCallback)
 
 	log.Println("airac start in :" + port)
 
