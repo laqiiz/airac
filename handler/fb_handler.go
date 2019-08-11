@@ -9,20 +9,20 @@ import (
 	"strconv"
 )
 
-type FacebookOauthHandler struct {
+type FacebookHandler struct {
 }
 
 type FacebookCallbackRequest struct {
-	Code  string `form:"code"`
-	State int    `form:"state"`
+	Code  string
+	State int
 }
 
-func (c *FacebookOauthHandler) Redirect(w http.ResponseWriter, r *http.Request) {
+func (c *FacebookHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 	url := conn.GetFacebookConnect().AuthCodeURL("")
 	http.Redirect(w, r, url, 302)
 }
 
-func (c *FacebookOauthHandler) GetCallback(w http.ResponseWriter, r *http.Request) {
+func (c *FacebookHandler) GetCallback(w http.ResponseWriter, r *http.Request) {
 	state, err := strconv.Atoi(r.URL.Query().Get("state"))
 	if err != nil {
 		panic(err)
