@@ -14,6 +14,10 @@ Auth Identify Resource and Access Controller
 set GOOGLE_CLIENT_ID=<Your Client ID>
 set GOOGLE_CLIENT_SECRET=<Your Client Secret>
 
+# Twitter Consumer API keys
+set TWITTER_CONSUMER_KEY=<Your Consumer Key>
+set TWITTER_CONSUMER_SECRET=<Your Consumer Secret>
+
 # Optional(default 8000) 
 set PORT=8000
 ```

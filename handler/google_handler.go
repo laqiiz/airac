@@ -9,20 +9,20 @@ import (
 	"net/http"
 )
 
-type GoogleOAuthController struct {
+type GoogleHandler struct {
 }
 
 type GoogleCallbackRequest struct {
-	Code  string `form:"code"`
-	State string `form:"state"`
+	Code  string
+	State string
 }
 
-func (c *GoogleOAuthController) Redirect(w http.ResponseWriter, r *http.Request) {
+func (c *GoogleHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 	url := conn.GetGoogleConnect().AuthCodeURL("")
 	http.Redirect(w, r, url, 302)
 }
 
-func (c *GoogleOAuthController) GetCallback(w http.ResponseWriter, r *http.Request) {
+func (c *GoogleHandler) GetCallback(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var request = GoogleCallbackRequest{
