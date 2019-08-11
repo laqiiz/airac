@@ -16,7 +16,7 @@ func GetGitHubConnect() *oauth2.Config {
 		ClientSecret: clientSecret,
 		Endpoint:     github.Endpoint,
 		Scopes:       []string{"user:email", "repo"},
-		RedirectURL:  "http://localhost:8080/github/callback",
+		RedirectURL:  "http://localhost:8000/github/callback",
 	}
 
 }

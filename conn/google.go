@@ -23,6 +23,6 @@ func GetGoogleConnect() *oauth2.Config {
 			TokenURL: tokenEndpoint,
 		},
 		Scopes:      []string{"openid", "email", "profile"},
-		RedirectURL: "http://localhost:8080/google/callback",
+		RedirectURL: "http://localhost:8000/google/callback",
 	}
 }

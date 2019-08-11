@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/laqiiz/airac/handler"
+	"github.com/laqiiz/airac/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -26,20 +27,15 @@ func main() {
 
 	// index
 	index := handler.IndexHandler{}
-	http.HandleFunc("/", index.Index)
+	http.HandleFunc("/", middleware.Entry(index.Index))
 
 	// HealthCheck
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "ok")
-	})
+	http.HandleFunc("/health",middleware.Entry(handler.Health))
 
 	// Google
-	http.HandleFunc("/google/oauth2", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "Hello World")
-	})
-	http.HandleFunc("/google/callback", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "Hello World")
-	})
+	google := handler.GoogleOAuthController{}
+	http.HandleFunc("/google/oauth2", middleware.Entry(google.Redirect))
+	http.HandleFunc("/google/callback", middleware.Entry(google.GetCallback))
 
 	// Twitter
 	http.HandleFunc("/twitter/oauth", func(w http.ResponseWriter, r *http.Request) {
@@ -53,12 +49,9 @@ func main() {
 	})
 
 	// Facebook
-	http.HandleFunc("/facebook/oauth2", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "Hello World")
-	})
-	http.HandleFunc("/facebook/callback", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "Hello World")
-	})
+	fb := handler.FacebookOauthHandler{}
+	http.HandleFunc("/facebook/oauth2", middleware.Entry(fb.Redirect))
+	http.HandleFunc("/facebook/callback", middleware.Entry(fb.GetCallback))
 
 	// GitHub
 	http.HandleFunc("/github/oauth2", func(w http.ResponseWriter, r *http.Request) {

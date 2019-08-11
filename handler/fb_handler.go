@@ -9,32 +9,32 @@ import (
 	"strconv"
 )
 
-type FacebookOauth2Handler struct {
+type FacebookOauthHandler struct {
 }
 
-func (c *FacebookOauth2Handler) Get(w http.ResponseWriter, r *http.Request) {
-	url := conn.GetFacebookConnect().AuthCodeURL("")
-	http.Redirect(w, r, url, 302)
-}
-
-type CallbackRequest struct {
+type FacebookCallbackRequest struct {
 	Code  string `form:"code"`
 	State int    `form:"state"`
 }
 
-func (c *FacebookOauth2Handler) GetCallback(w http.ResponseWriter, r *http.Request) {
-	state, err := strconv.Atoi(r.Header.Get("state"))
+func (c *FacebookOauthHandler) Redirect(w http.ResponseWriter, r *http.Request) {
+	url := conn.GetFacebookConnect().AuthCodeURL("")
+	http.Redirect(w, r, url, 302)
+}
+
+func (c *FacebookOauthHandler) GetCallback(w http.ResponseWriter, r *http.Request) {
+	state, err := strconv.Atoi(r.URL.Query().Get("state"))
 	if err != nil {
 		panic(err)
 	}
-	var request = CallbackRequest{
-		Code:  r.Header.Get("code"),
+	var request = FacebookCallbackRequest{
+		Code:  r.URL.Query().Get("code"),
 		State: state,
 	}
 
-	config := conn.GetFacebookConnect()
+	con := conn.GetFacebookConnect()
 
-	tok, err := config.Exchange(r.Context(), request.Code)
+	tok, err := con.Exchange(r.Context(), request.Code)
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +45,7 @@ func (c *FacebookOauth2Handler) GetCallback(w http.ResponseWriter, r *http.Reque
 
 	session := &facebook.Session{
 		Version:    "v2.8",
-		HttpClient: config.Client(r.Context(), tok),
+		HttpClient: con.Client(r.Context(), tok),
 	}
 
 	res, err := session.Get("/me?fields=id,name,email", nil)
@@ -60,7 +60,7 @@ func (c *FacebookOauth2Handler) GetCallback(w http.ResponseWriter, r *http.Reque
 
 	tpl := template.Must(template.ParseFiles("view/facebook/callback.tpl"))
 
-	if err := tpl.Execute(w, map[string]string{}); err != nil {
+	if err := tpl.Execute(w, data); err != nil {
 		_, _ = w.Write([]byte(err.Error()))
 	}
 }

@@ -5,12 +5,20 @@ Auth Identify Resource and Access Controller
 
 // TODO
 
-## Required Configurations
+## Configurations
+
+### Windows
 
 ```sh
+# Google Client ID
+set GOOGLE_CLIENT_ID=<Your Client ID>
+set GOOGLE_CLIENT_SECRET=<Your Client Secret>
+
 # Optional(default 8000) 
-export PORT=8000
+set PORT=8000
 ```
+
+### Mac/Linux
 
 
 ## Developer Guide

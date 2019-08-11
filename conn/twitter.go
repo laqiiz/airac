@@ -23,8 +23,8 @@ type Account struct {
 }
 
 func init() {
-	tempCredKey = os.Getenv("twitter_Consumer_Key")
-	tokenCredKey = os.Getenv("twitter_Consumer_Secret")
+	tempCredKey = os.Getenv("TWITTER_CONSUMER_KEY")
+	tokenCredKey = os.Getenv("TWITTER_CONSUMER_SECRET")
 }
 
 func GetConnect() *oauth.Client {

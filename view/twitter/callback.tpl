@@ -1,26 +1,24 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
 <title>example-golang-oauth</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <div class="container">
-    <br />
-    <div class="alert alert-success" role="alert">twitter認証成功！</div>
+    <br/>
+    <div class="alert alert-success" role="alert">Twitter Account Login Success！</div>
     <div class="panel panel-success">
-        <div class="panel-heading">
-            情報
-        </div>
+        <div class="panel-heading">情報</div>
         <div class="panel-body">
-            <br />
+            <br/>
             <ul class="list-group">
                 <li class="list-group-item"><img src="{{.ProfileImageURL}}">
                 <li class="list-group-item">ID：{{.ID}}
                 <li class="list-group-item">Name：{{.ScreenName}}
                 <li class="list-group-item">Email：{{.Email}}
-                <li class="list-group-item"><a href="http://localhost:8080/twitter/post">テストで呟く</a>（※連携中のアカウントでAPI投稿を行います）
+                <li class="list-group-item"><a href="/twitter/post">テストで呟く</a>（※連携中のアカウントでAPI投稿を行います）
             </ul>
         </div>
     </div>
-    <a href="http://localhost:8080/">戻る</a>
+    <a href="/">戻る</a>
 </div>
