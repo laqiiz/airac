@@ -17,11 +17,11 @@ type CallbackRequest struct {
 	State int
 }
 
-func (h *GitHubHandler) Redirect(w http.ResponseWriter, r *http.Request) {
+func (h *GitHubHandler) AuthRedirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, conn.GetGitHubConnect().AuthCodeURL(""), 302)
 }
 
-func (h *GitHubHandler) GetCallback(w http.ResponseWriter, r *http.Request) {
+func (h *GitHubHandler) Callback(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	state, err := strconv.Atoi(r.URL.Query().Get("state"))

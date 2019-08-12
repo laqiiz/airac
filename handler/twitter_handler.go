@@ -23,7 +23,7 @@ func NewTwitterHandler(session *scs.SessionManager) *twitterHandler {
 	}
 }
 
-func (h *twitterHandler) Redirect(w http.ResponseWriter, r *http.Request) {
+func (h *twitterHandler) AuthRedirect(w http.ResponseWriter, r *http.Request) {
 	con := conn.GetTwitterConnect()
 
 	rt, err := con.RequestTemporaryCredentials(nil, "http://localhost:8000/twitter/callback", nil)
@@ -37,7 +37,7 @@ func (h *twitterHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, con.AuthorizationURL(rt, nil), 302)
 }
 
-func (h *twitterHandler) GetCallback(w http.ResponseWriter, r *http.Request) {
+func (h *twitterHandler) Callback(w http.ResponseWriter, r *http.Request) {
 	request := TwitterCallbackRequest{
 		Token:    r.URL.Query().Get("oauth_token"),
 		Verifier: r.URL.Query().Get("oauth_verifier"),

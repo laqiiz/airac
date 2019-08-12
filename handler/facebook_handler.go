@@ -17,11 +17,11 @@ type FacebookCallbackRequest struct {
 	State int
 }
 
-func (h *FacebookHandler) Redirect(w http.ResponseWriter, r *http.Request) {
+func (h *FacebookHandler) AuthRedirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, conn.GetFacebookConnect().AuthCodeURL(""), 302)
 }
 
-func (h *FacebookHandler) GetCallback(w http.ResponseWriter, r *http.Request) {
+func (h *FacebookHandler) Callback(w http.ResponseWriter, r *http.Request) {
 	state, err := strconv.Atoi(r.URL.Query().Get("state"))
 	if err != nil {
 		state = 0 // TODO
