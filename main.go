@@ -2,8 +2,10 @@ package main
 
 import (
 	"github.com/alexedwards/scs/v2"
+	"github.com/gorilla/mux"
 	"github.com/laqiiz/airac/handler"
 	"github.com/laqiiz/airac/middleware"
+	"github.com/laqiiz/airac/repository"
 	"log"
 	"net/http"
 	"os"
@@ -30,36 +32,42 @@ func main() {
 	sessionManager := scs.New()
 	sessionManager.Lifetime = 24 * time.Hour // TODO Magic Number
 
-	mux := http.NewServeMux()
+	// gorilla router
+	r := mux.NewRouter()
 
 	// index
 	index := handler.IndexHandler{}
-	mux.HandleFunc("/", middleware.Entry(index.Index))
+	r.HandleFunc("/", middleware.Entry(index.Index)).Methods(http.MethodGet)
 
 	// HealthCheck
-	mux.HandleFunc("/health", middleware.Entry(handler.Health))
+	r.HandleFunc("/health", middleware.Entry(handler.Health)).Methods(http.MethodGet)
 
 	// Google
 	google := handler.GoogleHandler{}
-	mux.HandleFunc("/google/oauth2", middleware.Entry(google.Redirect))
-	mux.HandleFunc("/google/callback", middleware.Entry(google.GetCallback))
+	r.HandleFunc("/google/oauth2", middleware.Entry(google.AuthRedirect)).Methods(http.MethodGet)
+	r.HandleFunc("/google/callback", middleware.Entry(google.Callback)).Methods(http.MethodGet)
 
 	// Twitter
 	twitterHandler := handler.NewTwitterHandler(sessionManager)
-	mux.HandleFunc("/twitter/oauth", twitterHandler.Redirect)
-	mux.HandleFunc("/twitter/callback", twitterHandler.GetCallback)
+	r.HandleFunc("/twitter/oauth", twitterHandler.AuthRedirect).Methods(http.MethodGet)
+	r.HandleFunc("/twitter/callback", twitterHandler.Callback).Methods(http.MethodGet)
 
 	// Facebook
 	fb := handler.FacebookHandler{}
-	mux.HandleFunc("/facebook/oauth2", middleware.Entry(fb.Redirect))
-	mux.HandleFunc("/facebook/callback", middleware.Entry(fb.GetCallback))
+	r.HandleFunc("/facebook/oauth2", middleware.Entry(fb.AuthRedirect)).Methods(http.MethodGet)
+	r.HandleFunc("/facebook/callback", middleware.Entry(fb.Callback)).Methods(http.MethodGet)
 
 	// GitHub
 	github := handler.GitHubHandler{}
-	mux.HandleFunc("/github/oauth2", github.Redirect)
-	mux.HandleFunc("/github/callback", github.GetCallback)
+	r.HandleFunc("/github/oauth2", github.AuthRedirect).Methods(http.MethodGet)
+	r.HandleFunc("/github/callback", github.Callback).Methods(http.MethodGet)
+
+	// SignUp,SignIn,SignOut,DeleteAccount
+	ur := repository.NewMemUserRepository()
+	signupHandler := handler.NewSignupHandler(sessionManager, ur)
+	r.HandleFunc("/signup", signupHandler.SignUp).Methods(http.MethodPost)
 
 	log.Println("airac start in :" + port)
 
-	log.Fatal(http.ListenAndServe(":"+port, sessionManager.LoadAndSave(mux)))
+	log.Fatal(http.ListenAndServe(":"+port, sessionManager.LoadAndSave(r)))
 }

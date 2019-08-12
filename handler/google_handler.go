@@ -17,11 +17,11 @@ type GoogleCallbackRequest struct {
 	State string
 }
 
-func (h *GoogleHandler) Redirect(w http.ResponseWriter, r *http.Request) {
+func (h *GoogleHandler) AuthRedirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, conn.GetGoogleConnect().AuthCodeURL(""), 302)
 }
 
-func (h *GoogleHandler) GetCallback(w http.ResponseWriter, r *http.Request) {
+func (h *GoogleHandler) Callback(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var request = GoogleCallbackRequest{

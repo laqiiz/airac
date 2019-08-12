@@ -1,0 +1,34 @@
+@startuml
+
+skinparam sequence {
+  ArrowColor #000000
+  LifeLineBorderColor #000000
+  LifeLineBackgroundColor #1695a3
+  ActorBorderColor #000000
+  ActorBackgroundColor #ffffff
+  ParticipantBorderColor #000000
+  ParticipantBackgroundColor #225378
+  ParticipantFontColor #ffffff
+}
+skinparam shadowing false
+hide footbox
+
+title Login
+
+actor EndUser
+participant ServiceN
+participant AirAC
+participant SNS
+
+EndUser -> ServiceN: Request
+ServiceN -> ServiceN: CheckSession
+ServiceN -> EndUser: Redirect
+EndUser -> AirAC: Request
+EndUser <-- AirAC: Response
+EndUser -> EndUser: Login by SNS
+EndUser -> AirAC: Login via SNS
+EndUser <-- AirAC: Redirect
+EndUser -> SNS: Response
+EndUser <-- SNS: Response
+
+@enduml
