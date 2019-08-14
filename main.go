@@ -35,10 +35,6 @@ func main() {
 	// gorilla router
 	r := mux.NewRouter()
 
-	// index
-	index := handler.IndexHandler{}
-	r.HandleFunc("/", middleware.Entry(index.Index)).Methods(http.MethodGet)
-
 	// HealthCheck
 	r.HandleFunc("/health", middleware.Entry(handler.Health)).Methods(http.MethodGet)
 
@@ -68,6 +64,10 @@ func main() {
 	r.HandleFunc("/signup", signupHandler.SignUp).Methods(http.MethodPost)
 
 	log.Println("airac start in :" + port)
+
+	// host static contents
+	// refs: https://github.com/julienschmidt/httprouter/issues/7#issuecomment-430809282
+	r.NotFoundHandler =  http.StripPrefix("/", http.FileServer(http.Dir("static/")))
 
 	log.Fatal(http.ListenAndServe(":"+port, sessionManager.LoadAndSave(r)))
 }
