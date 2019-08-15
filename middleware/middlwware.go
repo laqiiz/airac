@@ -28,8 +28,9 @@ func Recover(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 
 func Log(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%v %v %v[byte]", r.Method, r.URL.Path, r.ContentLength)
 		start := time.Now()
 		fn(w, r)
-		log.Printf("%v %v %v", r.URL.Path, r.Method, time.Since(start))
+		log.Printf("%v %v %v %v[byte]", r.Method, r.URL.Path, time.Since(start), r.ContentLength)
 	}
 }

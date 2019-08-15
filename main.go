@@ -55,19 +55,20 @@ func main() {
 
 	// GitHub
 	github := handler.GitHubHandler{}
-	r.HandleFunc("/github/oauth2", github.AuthRedirect).Methods(http.MethodGet)
-	r.HandleFunc("/github/callback", github.Callback).Methods(http.MethodGet)
+	r.HandleFunc("/github/oauth2", middleware.Entry(github.AuthRedirect)).Methods(http.MethodGet)
+	r.HandleFunc("/github/callback", middleware.Entry(github.Callback)).Methods(http.MethodGet)
 
 	// SignUp,SignIn,SignOut,DeleteAccount
 	ur := repository.NewMemUserRepository()
 	signupHandler := handler.NewSignupHandler(sessionManager, ur)
-	r.HandleFunc("/signup", signupHandler.SignUp).Methods(http.MethodPost)
+	r.HandleFunc("/signup", middleware.Entry(signupHandler.SignUp)).Methods(http.MethodPost)
+	r.HandleFunc("/signin", middleware.Entry(signupHandler.SignIn)).Methods(http.MethodPost)
 
 	log.Println("airac start in :" + port)
 
 	// host static contents
 	// refs: https://github.com/julienschmidt/httprouter/issues/7#issuecomment-430809282
-	r.NotFoundHandler =  http.StripPrefix("/", http.FileServer(http.Dir("static/")))
+	r.NotFoundHandler = http.StripPrefix("/", http.FileServer(http.Dir("static/")))
 
 	log.Fatal(http.ListenAndServe(":"+port, sessionManager.LoadAndSave(r)))
 }

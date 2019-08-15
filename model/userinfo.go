@@ -7,25 +7,26 @@ import (
 	"time"
 )
 
+// UserInfo represents OAuth returning info.
 type UserInfo struct {
 	ID       string
 	MailAddr string
 }
 
-type SignUp struct {
+type Account struct {
 	ID        string
 	MailAddr  string
 	PassHash  string
 	CreatedAt time.Time
 }
 
-func NewSignUp(mailAddr, pw string) (*SignUp, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(pw), bcrypt.MaxCost)
+func NewSignUp(mailAddr, pw string) (*Account, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(pw), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
 
-	return &SignUp{
+	return &Account{
 		ID:        xid.New().String(),
 		MailAddr:  mailAddr,
 		PassHash:  string(hash),
@@ -34,7 +35,7 @@ func NewSignUp(mailAddr, pw string) (*SignUp, error) {
 }
 
 type UserRepository interface {
-	GetByEmail(ctx context.Context, mailAddr string) (*UserInfo, error)
-	Insert(ctx context.Context, signUp *SignUp) error
+	GetByEmail(ctx context.Context, mailAddr string) (*Account, error)
+	Insert(ctx context.Context, signUp *Account) error
 	Delete(ctx context.Context, userID string) error
 }

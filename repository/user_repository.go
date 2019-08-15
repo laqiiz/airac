@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/laqiiz/airac/model"
 	"github.com/patrickmn/go-cache"
+	"log"
 	"time"
 )
 
@@ -17,18 +18,21 @@ type MemUseRepository struct {
 	cache *cache.Cache
 }
 
-func (r *MemUseRepository) GetByEmail(ctx context.Context, mailAddr string) (*model.UserInfo, error) {
+func (r *MemUseRepository) GetByEmail(ctx context.Context, mailAddr string) (*model.Account, error) {
+	log.Println("start")
 	info, found := r.cache.Get(mailAddr)
 	if !found {
+		log.Println("not found")
 		return nil, model.NotFound
 	}
+	log.Println("found")
 
-	userInfo := info.(*model.UserInfo)
-	return userInfo, nil
+	a := info.(*model.Account)
+	return a, nil
 }
 
-func (r *MemUseRepository) Insert(ctx context.Context, signUp *model.SignUp) error {
-	r.cache.Set(signUp.ID, signUp, cache.DefaultExpiration)
+func (r *MemUseRepository) Insert(ctx context.Context, a *model.Account) error {
+	r.cache.Set(a.MailAddr, a, cache.DefaultExpiration)
 	return nil
 }
 

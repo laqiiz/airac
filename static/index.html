@@ -18,21 +18,9 @@
                             <v-toolbar color="primary" dark flat>
                                 <v-toolbar-title>Login form</v-toolbar-title>
                                 <v-spacer></v-spacer>
+                                <v-btn outlined color="white">ユーザ登録</v-btn>
                             </v-toolbar>
-                            <v-card-text>
-                                <v-form>
-                                    <v-text-field label="Login" name="login" prepend-icon="person"
-                                                  type="text"></v-text-field>
-                                    <v-text-field id="password" label="Password" name="password" prepend-icon="lock"
-                                                  type="password"></v-text-field>
-                                </v-form>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-btn color="primary" @click="getPosts(section)">Login</v-btn>
-                            </v-card-actions>
-                            <v-card-actions>
-                                <v-text>OR</v-text>
-                            </v-card-actions>
+                            <v-card-text>SNSでログイン</v-card-text>
                             <v-card-actions>
                                 <v-btn href="/google/oauth2">
                                     <i class="fa fa-google" style="font-size:1.5rem;color:#ea4335"></i>&nbsp;Google
@@ -40,12 +28,28 @@
                                 <v-btn href="/facebook/oauth2">
                                     <i class="fa fa-facebook" style="font-size:1.5rem;color:#3c57a4"></i>&nbsp;Facebook
                                 </v-btn>
-                                <v-btn href="/twitter/oauth2">
+                                <v-btn href="/twitter/oauth">
                                     <i class="fa fa-twitter" style="font-size:1.5rem;color:#1da1f2"></i>&nbsp;Twitter
                                 </v-btn>
                                 <v-btn href="/github/oauth2">
                                     <i class="fa fa-github" style="font-size:1.5rem;color:#333"></i>&nbsp;GitHub
                                 </v-btn>
+                            </v-card-actions>
+                            <v-card-text>OR</v-card-text>
+                            <v-card-text>
+                                <v-form>
+                                    <v-text-field label="Login" name="login" prepend-icon="person"
+                                                  type="text" v-model="email" :rules="[rules.required, rules.email]"></v-text-field>
+                                    <v-text-field id="password" label="Password" name="password" prepend-icon="lock"
+                                                  type="password" v-model="password" :rules="[rules.required, rules.passwordLen]" required></v-text-field>
+                                </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-btn color="primary" @click="signup">Login</v-btn>
+                            </v-card-actions>
+                            <v-card-actions>
+                                <v-alert v-model="show" :dismissible="dismissible" :type="type"
+                                         class="mb-4">{{ message }}</v-alert>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
@@ -59,4 +63,6 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="index.js"></script>
