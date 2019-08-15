@@ -60,7 +60,7 @@ func main() {
 
 	// SignUp,SignIn,SignOut,DeleteAccount
 	ur := repository.NewMemUserRepository()
-	signupHandler := handler.NewSignupHandler(sessionManager, ur)
+	signupHandler := handler.NewSignHandler(sessionManager, ur)
 	r.HandleFunc("/signup", middleware.Entry(signupHandler.SignUp)).Methods(http.MethodPost)
 	r.HandleFunc("/signin", middleware.Entry(signupHandler.SignIn)).Methods(http.MethodPost)
 

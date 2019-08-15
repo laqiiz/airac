@@ -22,6 +22,13 @@ Get clientID and Secret Key each applications.
   * Where can this GitHub App be installed? > Any account
 
 
+Create Keys
+
+1. ssh-keygen -t rsa
+  * example) file name is `demo`
+2. ssh-keygen -f demo.rsa.pub -e -m pkcs8 > demo.rsa.pub.pkcs8
+
+
 Set environment variables.
 
 ```sh
@@ -38,7 +45,12 @@ set FACEBOOK_CLIENT_ID=<Your Client ID>
 set FACEBOOK_CLIENT_SECRET=<Your Client Secret>
 
 # GitHub
+set GITHUB_CLIENT_ID=<Your Client ID>
+set GITHUB_CLIENT_SECRET=<Your Client Secret>
 
+# PublicKey & SecretKey
+set PRIVATE_KEY_PATH=<path>
+set PUBLIC_KEY_PATH=<path>
 
 # Optional(default 8000) 
 set PORT=8000
@@ -46,6 +58,7 @@ set PORT=8000
 
 ### Mac/Linux
 
+TODO 
 
 ## Developer Guide
 
