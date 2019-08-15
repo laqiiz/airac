@@ -96,6 +96,15 @@ docker build -t airac .
 docker run airac
 ```
 
+### Hot Reload
+
+1. Install
+  * `go get github.com/pilu/fresh`
+  * `go mod tidy`
+2. Run
+  * `fresh` instead of go run main.go
+
+
 ## License
 
 This project is licensed under the Apache License 2.0 License - see the [LICENSE](LICENSE) file for details

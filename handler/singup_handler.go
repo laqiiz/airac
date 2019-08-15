@@ -6,6 +6,7 @@ import (
 	"github.com/laqiiz/airac/model"
 	"gopkg.in/go-playground/validator.v9"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -23,8 +24,13 @@ type SignUpHandler struct {
 }
 
 type SignUp struct {
-	Email    string `form:"email" validate:"required,email"`
-	Password string `form:"password" validate:"min=8,max=100"`
+	Email    string `json:"email"    validate:"required,email"`
+	Password string `json:"password" validate:"min=8,max=100"`
+}
+
+type SignIn struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type AccountCreated struct {
@@ -34,10 +40,10 @@ type AccountCreated struct {
 }
 
 func (h *SignUpHandler) SignUp(w http.ResponseWriter, r *http.Request) {
-	var signUp SignUp
 	length, err := strconv.Atoi(r.Header.Get("Content-Length"))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
@@ -46,35 +52,41 @@ func (h *SignUpHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	if err != nil && err != io.EOF {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
+		log.Println(err)
 		return
 	}
 
+	var signUp SignUp
 	if err := json.Unmarshal(body, &signUp); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
+		log.Println(err)
 		return
 	}
+
+	log.Println("validate")
 
 	validate := validator.New()
 	if err := validate.Struct(signUp); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
+		log.Println(err)
 		return
 	}
 
 	ctx := r.Context()
 
-	if _, err := h.r.GetByEmail(ctx, signUp.Email); err != nil {
+	_, err = h.r.GetByEmail(ctx, signUp.Email)
+	if err != nil && err != model.NotFound {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
+		log.Println(err)
 		return
 	}
-
-	if err != model.NotFound {
+	if err == nil {
 		body := model.ProblemError{
 			Title: "mail addr already exists",
 		}
-
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusConflict)
 		_ = json.NewEncoder(w).Encode(body)
@@ -99,5 +111,60 @@ func (h *SignUpHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	h.session.Put(ctx, "user_id", up.ID)
 
+		w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(up)
+}
+
+func (h *SignUpHandler) SignIn(w http.ResponseWriter, r *http.Request) {
+	var signIn SignIn
+	length, err := strconv.Atoi(r.Header.Get("Content-Length"))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	body := make([]byte, length)
+	length, err = r.Body.Read(body)
+	if err != nil && err != io.EOF {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	if err := json.Unmarshal(body, &signIn); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(signIn); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	ctx := r.Context()
+
+	userInfo, err := h.r.GetByEmail(ctx, signIn.Email)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	if err == model.NotFound {
+		body := model.ProblemError{
+			Title: "mail addr is not found",
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		_ = json.NewEncoder(w).Encode(body)
+		return
+	}
+
+	h.session.Put(ctx, "user_id", userInfo.ID)
+
+	_ = json.NewEncoder(w).Encode(userInfo)
 }
