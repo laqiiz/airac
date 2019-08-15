@@ -17,3 +17,9 @@ main
 
 # fresh work dir
 tmp
+
+# key
+*.rsa
+*.rsa.pub
+*.rsa.pub.pkcs8
+

@@ -3,24 +3,23 @@ package handler
 import (
 	"encoding/json"
 	"github.com/alexedwards/scs/v2"
+	"github.com/laqiiz/airac/jwt"
 	"github.com/laqiiz/airac/model"
 	"gopkg.in/go-playground/validator.v9"
-	"io"
 	"log"
 	"net/http"
-	"strconv"
 )
 
-func NewSignupHandler(session *scs.SessionManager, r model.UserRepository) SignUpHandler {
-	return SignUpHandler{
+type SignHandler struct {
+	r       model.UserRepository
+	session *scs.SessionManager
+}
+
+func NewSignHandler(session *scs.SessionManager, r model.UserRepository) SignHandler {
+	return SignHandler{
 		r:       r,
 		session: session,
 	}
-}
-
-type SignUpHandler struct {
-	r       model.UserRepository
-	session *scs.SessionManager
 }
 
 type SignUp struct {
@@ -33,41 +32,17 @@ type SignIn struct {
 	Password string `json:"password"`
 }
 
-type AccountCreated struct {
-	Warning bool   `json:"warning"`
-	Message string `json:"message"`
-	UserID  uint   `json:"userID"`
-}
-
-func (h *SignUpHandler) SignUp(w http.ResponseWriter, r *http.Request) {
-	length, err := strconv.Atoi(r.Header.Get("Content-Length"))
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
-
-	body := make([]byte, length)
-	length, err = r.Body.Read(body)
-	if err != nil && err != io.EOF {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		log.Println(err)
-		return
-	}
-
+func (h *SignHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	var signUp SignUp
-	if err := json.Unmarshal(body, &signUp); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	if err := json.NewDecoder(r.Body).Decode(&signUp); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(err.Error()))
 		log.Println(err)
 		return
 	}
 
-	log.Println("validate")
-
-	validate := validator.New()
-	if err := validate.Struct(signUp); err != nil {
+	// validate at only sign-up because do not save database for illegal variable
+	if err := validator.New().Struct(signUp); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		log.Println(err)
@@ -76,7 +51,7 @@ func (h *SignUpHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	_, err = h.r.GetByEmail(ctx, signUp.Email)
+	_, err := h.r.GetByEmail(ctx, signUp.Email)
 	if err != nil && err != model.NotFound {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -103,49 +78,29 @@ func (h *SignUpHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 			Title: "insert error: " + err.Error(),
 		}
 
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(body)
 		return
 	}
 
 	h.session.Put(ctx, "user_id", up.ID)
 
-		w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("content-type", "application/json")
 	_ = json.NewEncoder(w).Encode(up)
 }
 
-func (h *SignUpHandler) SignIn(w http.ResponseWriter, r *http.Request) {
+func (h *SignHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	var signIn SignIn
-	length, err := strconv.Atoi(r.Header.Get("Content-Length"))
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	body := make([]byte, length)
-	length, err = r.Body.Read(body)
-	if err != nil && err != io.EOF {
-		w.WriteHeader(http.StatusInternalServerError)
+	if err := json.NewDecoder(r.Body).Decode(&signIn); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	if err := json.Unmarshal(body, &signIn); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	validate := validator.New()
-	if err := validate.Struct(signIn); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
+		log.Println(err)
 		return
 	}
 
 	ctx := r.Context()
-
 	userInfo, err := h.r.GetByEmail(ctx, signIn.Email)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -166,5 +121,20 @@ func (h *SignUpHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	h.session.Put(ctx, "user_id", userInfo.ID)
 
+	jwtToken, err := jwt.GenerateToken(userInfo.ID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	// Cookie
+	http.SetCookie(w, &http.Cookie{  //TODO 他のオプションも検討
+		Name:  "jwtToken",
+		Value: jwtToken,
+	})
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("content-type", "application/json")
 	_ = json.NewEncoder(w).Encode(userInfo)
 }
